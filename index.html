@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>С Днём Победы! 9 Мая</title>
+    <title>9 Мая — С Днём Победы!</title>
     <style>
         body {
             margin: 0;
-            background: #111111;
+            background: #05060A;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,12 +15,12 @@
             font-family: Arial, sans-serif;
         }
         canvas {
-            background: #111111;
+            background: #05060A;
         }
     </style>
 </head>
 <body>
-<canvas id="victoryCanvas" width="900" height="600"></canvas>
+<canvas id="victoryCanvas" width="960" height="600"></canvas>
 
 <script>
 const canvas = document.getElementById("victoryCanvas");
@@ -29,137 +29,59 @@ const ctx = canvas.getContext("2d");
 const W = canvas.width;
 const H = canvas.height;
 
-// ---------- георгиевская лента ----------
-// классический чёрно-оранжевый узор с тройными чёрными полосами [web:187][web:190]
-function drawRibbon(offset = 0) {
-    // лента — диагональная полоса снизу слева вверх направо
-    const stripeWidth = 20;
-    const bands = [
-        "#000000", "#FF8C00", "#000000",
-        "#FF8C00", "#000000"
-    ];
-
-    // рисуем широкую полосу через множество параллельных линий
-    // используем сдвиг offset для лёгкой "волны"
-    const baseYShift = Math.sin(offset) * 8; // небольшая волна
-
-    ctx.save();
-    ctx.translate(-200, baseYShift);  // чуть выносим за левый край
-    ctx.rotate(-Math.PI / 6);         // наклон ~30°
-    
-    for (let i = 0; i < bands.length; i++) {
-        ctx.fillStyle = bands[i];
-        ctx.fillRect(0, i * stripeWidth, W * 1.6, stripeWidth);
-    }
-
-    ctx.restore();
-}
-
-// ---------- звезда ----------
-function drawStar(cx, cy, outerR, innerR, fill, stroke) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.fillStyle = fill;
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 3;
-
-    for (let i = 0; i < 10; i++) {
-        const angle = Math.PI / 2 + i * Math.PI / 5; // 5-конечная звезда
-        const r = i % 2 === 0 ? outerR : innerR;
-        const x = cx + r * Math.cos(angle);
-        const y = cy - r * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    }
-
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-}
-
-// ---------- лавровые ветви (упрощённо) ----------
-function drawLaurelBranch(cx, cy, scaleX, flipY = 1) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.scale(scaleX, flipY);
-    ctx.strokeStyle = "#C0C000";
-    ctx.fillStyle = "#C0C000";
-    ctx.lineWidth = 2;
-
-    // стебель
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.quadraticCurveTo(40, -20, 80, -60);
-    ctx.stroke();
-
-    // листья по стеблю
-    for (let i = 0; i < 6; i++) {
-        const t = i / 5;
-        const bx = 0 + 80 * t;
-        const by = 0 - 60 * t;
-
-        ctx.beginPath();
-        ctx.ellipse(bx, by, 14, 6, Math.PI / 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.ellipse(bx, by - 10, 14, 6, -Math.PI / 4, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    ctx.restore();
-}
-
-// ---------- текст ----------
-function drawText() {
-    // "С Днём Победы!"
-    ctx.fillStyle = "#FFFFFF";
-    ctx.textAlign = "center";
-
-    ctx.font = "bold 42px Arial";
-    ctx.fillText("С Днём Победы!", W / 2, H - 80);
-
-    ctx.font = "bold 32px Arial";
-    ctx.fillStyle = "#FFD700";
-    ctx.fillText("9 Мая", W / 2, H - 35);
-}
-
-// ---------- основная отрисовка и анимация ----------
-let t = 0;
-
-function drawFrame() {
-    ctx.clearRect(0, 0, W, H);
-
-    // фон — лёгкий радиальный градиент
+// ---------- фон ----------
+function drawBackground() {
     const grad = ctx.createRadialGradient(
         W / 2, H / 2, 50,
-        W / 2, H / 2, 500
+        W / 2, H / 2, 600
     );
-    grad.addColorStop(0, "#222222");
+    grad.addColorStop(0, "#151623");
+    grad.addColorStop(0.5, "#05060A");
     grad.addColorStop(1, "#000000");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // георгиевская лента
-    drawRibbon(t * 0.03);
-
-    // звезда в центре сверху
-    const starPulse = 1 + 0.05 * Math.sin(t * 0.1);
-    drawStar(W / 2, H / 2 - 80, 60 * starPulse, 25 * starPulse, "#FFCC00", "#CC9900");
-
-    // лавровые ветви снизу от звезды [web:183]
-    drawLaurelBranch(W / 2 - 80, H / 2 + 10, 1, 1);   // левая
-    drawLaurelBranch(W / 2 + 80, H / 2 + 10, -1, 1);  // правая (зеркально)
-
-    // текст
-    drawText();
-
-    t += 1;
-    requestAnimationFrame(drawFrame);
+    // немного "огоньков" на фоне
+    ctx.fillStyle = "rgba(255, 215, 0, 0.15)";
+    for (let i = 0; i < 40; i++) {
+        const x = Math.random() * W;
+        const y = Math.random() * (H * 0.6);
+        const r = Math.random() * 2 + 0.5;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
-drawFrame();
-</script>
-</body>
-</html>
+// ---------- георгиевская лента (волной) ----------
+function drawRibbon(t) {
+    const baseY = H * 0.6;
+    const amplitude = 35;
+    const stripeWidth = 18;
+    const bands = ["#000000", "#FF8C00", "#000000", "#FF8C00", "#000000"];
+
+    for (let b = 0; b < bands.length; b++) {
+        ctx.strokeStyle = bands[b];
+        ctx.lineWidth = stripeWidth;
+        ctx.beginPath();
+        for (let x = -50; x <= W + 50; x += 5) {
+            const phase = (x + b * 10) / 140 + t * 0.03;
+            const y = baseY + Math.sin(phase) * amplitude + (b - 2) * (stripeWidth - 4);
+            if (x === -50) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+}
+
+// ---------- звезда и сияние ----------
+function drawStarGlow(cx, cy, t) {
+    const glowRadius = 120 + 5 * Math.sin(t * 0.05);
+
+    const glowGrad = ctx.createRadialGradient(
+        cx, cy, 10,
+        cx, cy, glowRadius
+    );
+    glowGrad.addColorStop(0, "rgba(255, 215, 0, 0.6)");
+    glowGrad.addColorStop(0.4, "rgba(255, 140, 0, 0.25)");
+    glowGrad.addColorStop(1, "rgba(0, 
