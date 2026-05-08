@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>9 Мая — С Днём Победы!</title>
+    <title>Тест 9 Мая</title>
     <style>
         body {
             margin: 0;
@@ -11,8 +11,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
         }
         canvas {
             background: #05060A;
@@ -20,68 +18,32 @@
     </style>
 </head>
 <body>
-<canvas id="victoryCanvas" width="960" height="600"></canvas>
+<canvas id="c" width="800" height="500"></canvas>
 
 <script>
-const canvas = document.getElementById("victoryCanvas");
+const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
-
 const W = canvas.width;
 const H = canvas.height;
 
-// ---------- фон ----------
-function drawBackground() {
-    const grad = ctx.createRadialGradient(
-        W / 2, H / 2, 50,
-        W / 2, H / 2, 600
-    );
-    grad.addColorStop(0, "#151623");
-    grad.addColorStop(0.5, "#05060A");
-    grad.addColorStop(1, "#000000");
-    ctx.fillStyle = grad;
+function drawTest() {
+    // фон
+    ctx.fillStyle = "#151623";
     ctx.fillRect(0, 0, W, H);
 
-    // немного "огоньков" на фоне
-    ctx.fillStyle = "rgba(255, 215, 0, 0.15)";
-    for (let i = 0; i < 40; i++) {
-        const x = Math.random() * W;
-        const y = Math.random() * (H * 0.6);
-        const r = Math.random() * 2 + 0.5;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-    }
+    // простой прямоугольник ленты
+    ctx.fillStyle = "#FF8C00";
+    ctx.fillRect(0, H*0.6, W, 30);
+
+    // текст
+    ctx.fillStyle = "#FFFFFF";
+    ctx.textAlign = "center";
+    ctx.font = "bold 40px Arial";
+    ctx.fillText("9 Мая", W/2, 100);
+    ctx.font = "bold 32px Arial";
+    ctx.fillText("С Днём Победы!", W/2, H - 60);
 }
-
-// ---------- георгиевская лента (волной) ----------
-function drawRibbon(t) {
-    const baseY = H * 0.6;
-    const amplitude = 35;
-    const stripeWidth = 18;
-    const bands = ["#000000", "#FF8C00", "#000000", "#FF8C00", "#000000"];
-
-    for (let b = 0; b < bands.length; b++) {
-        ctx.strokeStyle = bands[b];
-        ctx.lineWidth = stripeWidth;
-        ctx.beginPath();
-        for (let x = -50; x <= W + 50; x += 5) {
-            const phase = (x + b * 10) / 140 + t * 0.03;
-            const y = baseY + Math.sin(phase) * amplitude + (b - 2) * (stripeWidth - 4);
-            if (x === -50) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-    }
-}
-
-// ---------- звезда и сияние ----------
-function drawStarGlow(cx, cy, t) {
-    const glowRadius = 120 + 5 * Math.sin(t * 0.05);
-
-    const glowGrad = ctx.createRadialGradient(
-        cx, cy, 10,
-        cx, cy, glowRadius
-    );
-    glowGrad.addColorStop(0, "rgba(255, 215, 0, 0.6)");
-    glowGrad.addColorStop(0.4, "rgba(255, 140, 0, 0.25)");
-    glowGrad.addColorStop(1, "rgba(0, 
+drawTest();
+</script>
+</body>
+</html>
